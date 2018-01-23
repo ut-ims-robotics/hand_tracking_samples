@@ -7,7 +7,7 @@
 #pragma once
 #ifndef GLFWWIN_H
 #define GLFWWIN_H
-#include "../third_party/librealsense/examples/third_party/glfw/include/GLFW/glfw3.h"
+#include "GLFW/glfw3.h"
 
 #include <functional>
 #include <vector>
