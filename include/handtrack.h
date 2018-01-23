@@ -344,9 +344,9 @@ inline Image<unsigned short> HandSegmentVR(const Image<unsigned short> &depth, i
 }
 
 
-PhysModel LoadHandModel()
+PhysModel LoadHandModel(std::string base_path = "..")
 {
-	PhysModel handmodel("../assets/model_hand.json");
+	PhysModel handmodel(std::string(base_path + "/assets/model_hand.json").c_str());
 	for (unsigned int i = 2; i < handmodel.rigidbodies.size(); i++)  // this hand model init hack allows for more finger interpenetration.
 		for (auto &v : handmodel.rigidbodies[i].shapes[0].verts)     // pulling in the vertices used for the gjk shape-to-shape collision
 			v = v * float3(0.7f, 0.7f, 0.9f);                        // scale back x and y only  or perhaps a bit of z
@@ -827,9 +827,11 @@ struct HandTracker
 		from_json(*this, js);
 	}
 
-	HandTracker() : handmodel(LoadHandModel()), othermodel(LoadHandModel()),       // two models as one might be used in 2nd thread
-		cnn(PoseInitializerCNN("../assets/handposedd.cnnb")),          // may want to train cnn for specific camera and use case
-		vanity_bones(load_bone_meshes("../assets/vanity_bones.json")), // currently in rb com space 
+	HandTracker(std::string base_path = "..")  
+  : handmodel(LoadHandModel(base_path)),
+    othermodel(LoadHandModel(base_path)),       // two models as one might be used in 2nd thread
+		cnn(PoseInitializerCNN(base_path + "/assets/handposedd.cnnb")),          // may want to train cnn for specific camera and use case
+		vanity_bones(load_bone_meshes(base_path + "/assets/vanity_bones.json")), // currently in rb com space 
 		cnn_input(int2(64, 64), 0.0f),
 		cnn_output(8 * 16 * 16 + 16 * 16, 0.01f),
 		cnn_output_analysis(cnn_output, DCamera(int2(16)))
